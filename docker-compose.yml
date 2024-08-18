@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:latest
+    container_name: ${DB_CONTAINER_NAME}
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${LOCAL_HOST_DB_PORT}:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  old-system:
+    build:
+      context: ./old-system
+      dockerfile: Dockerfile
+    container_name: ${OLD_SYSTEM_CONTAINER_NAME}
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_CONTAINER_NAME}:${DB_PORT}/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      THREAD_COUNT: ${OLD_SYSTEM_THREADS}
+      PATIENT_COUNT: ${PATIENT_COUNT}
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    ports:
+      - "8081:8080"
+    command: ["--spring.profiles.active=${OLD_SYSTEM_PROFILE}"]
+
+  new-system:
+    build:
+      context: ./new-system
+      dockerfile: Dockerfile
+    container_name: new-system
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_CONTAINER_NAME}:${DB_PORT}/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      THREAD_COUNT: ${NEW_SYSTEM_THREADS}
+      OLD_SYSTEM_CONTAINER_NAME: ${OLD_SYSTEM_CONTAINER_NAME}
+    depends_on:
+      - old-system
+    ports:
+      - "8080:8080"
+    command: ["--spring.profiles.active=${NEW_SYSTEM_PROFILE}"]
+
+volumes:
+  postgres_data:

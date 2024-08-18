@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: old-system
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+
+---
+spring:
+  config:
+    activate:
+      on-profile: with_init
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db_init/schema.sql
