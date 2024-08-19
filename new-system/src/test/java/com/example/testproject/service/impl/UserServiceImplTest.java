@@ -25,7 +25,7 @@ public class UserServiceImplTest {
     private UserServiceImpl userService;
 
     @Test
-    @DisplayName("Trying create user with existing user login")
+    @DisplayName("Trying to create user with existing user login")
     public void testCreateUserIfNotExistsWithExistingLogin() {
         User existingUser = new User();
         existingUser.setLogin("login");
@@ -40,7 +40,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Trying create user with new user login")
+    @DisplayName("Trying to create user with new user login")
     public void testCreateUserIfNotExistsWithNewLogin() {
         final String newLogin = "login";
 

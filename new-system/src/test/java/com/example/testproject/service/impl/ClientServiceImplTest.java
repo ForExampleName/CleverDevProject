@@ -44,7 +44,7 @@ public class ClientServiceImplTest {
     private ClientServiceImpl clientService;
 
     @Test
-    @DisplayName("Trying fetch client data with unreachable source")
+    @DisplayName("Trying to fetch client data with unreachable source")
     public void testFetchClientDataWithUnreachableSource() {
         final String innerMessage = "Unreachable";
         Exception exception = new RestClientException(innerMessage);
@@ -60,7 +60,7 @@ public class ClientServiceImplTest {
     }
 
     @Test
-    @DisplayName("Fetching client data with null response body")
+    @DisplayName("Trying to fetch client data with null response body")
     public void testFetchClientDataWithNullResponseBody() {
         ResponseEntity<ClientDto[]> response = new ResponseEntity<>(null, HttpStatus.OK);
 
