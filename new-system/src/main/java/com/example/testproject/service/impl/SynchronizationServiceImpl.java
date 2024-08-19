@@ -43,7 +43,7 @@ public class SynchronizationServiceImpl implements SynchronizationService {
             log.info("Synchronization failed");
             log.error(e.getMessage(), e);
         } finally {
-            statistics.printStatistics();
+            log.info(statistics.generateStatisticsMessage());
         }
     }
 }

@@ -18,6 +18,19 @@ public class Statistics {
     private final AtomicInteger newNotes = new AtomicInteger(0);
     private final AtomicInteger updatedNotes = new AtomicInteger(0);
 
+    private final String MESSAGE_TEMPLATE = """
+
+            ---------------- STATISTICS ----------------
+            New patients: %d
+            New clients: %d
+            Invalid clients: %d
+            New users: %d
+            Invalid comments: %d
+            New notes: %d
+            Updated notes: %d
+            ---------------------------------------------
+            """;
+
     public void addNewPatients(int newPatients) {
         this.newPatients.getAndAdd(newPatients);
     }
@@ -56,15 +69,15 @@ public class Statistics {
         updatedNotes.set(0);
     }
 
-    public void printStatistics() {
-        System.out.println("---------------- STATISTICS ----------------");
-        System.out.println("New patients: " + newPatients);
-        System.out.println("New clients: " + newClients);
-        System.out.println("Invalid clients: " + invalidClientData);
-        System.out.println("New users: " + newUsers);
-        System.out.println("Invalid comments: " + invalidComments);
-        System.out.println("New notes: " + newNotes);
-        System.out.println("Updated notes: " + updatedNotes);
-        System.out.println("--------------------------------------------");
+    public String generateStatisticsMessage() {
+        return MESSAGE_TEMPLATE.formatted(
+                newPatients.get(),
+                newClients.get(),
+                invalidClientData.get(),
+                newUsers.get(),
+                invalidComments.get(),
+                newNotes.get(),
+                updatedNotes.get()
+        );
     }
 }
