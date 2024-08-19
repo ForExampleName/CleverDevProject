@@ -5,7 +5,6 @@ import com.example.testproject.repository.UserRepository;
 import com.example.testproject.service.UserService;
 import com.example.testproject.statistics.Statistics;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -20,15 +19,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public User createUserIfNotExists(String login) {
-        if (!userRepository.existsByLogin(login)) {
-            User newUser = new User();
-            newUser.setLogin(login);
+        int result = userRepository.createByLoginIfNotExists(login);
+        if(result != 0) {
             statistics.addNewUsers(1);
-            return userRepository.save(newUser);
         }
-
         return userRepository.findByLogin(login);
     }
 }
