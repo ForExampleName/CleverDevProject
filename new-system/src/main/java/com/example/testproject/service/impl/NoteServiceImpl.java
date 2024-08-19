@@ -48,7 +48,7 @@ public class NoteServiceImpl implements NoteService {
                            NoteRepository noteRepository,
                            Statistics statistics,
                            @Value("${OLD_SYSTEM_CONTAINER_NAME:localhost}") String oldSystemHost,
-                           @Value("${THREAD_COUNT}") int threadCount) {
+                           @Value("${THREAD_COUNT:4}") int threadCount) {
         this.validator = validator;
         this.restTemplate = restTemplate;
         this.userService = userService;
