@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -54,7 +55,9 @@ public class PatientServiceImplTest {
 
         // spy testing object to mock inner 'createNewPatients' method call
         PatientServiceImpl spy = spy(patientService);
-        doReturn(1).when(spy).createNewPatients(any());
+        doReturn(1)
+                .when(spy)
+                .createNewPatients(any());
 
         spy.synchronizePatients(clientData);
 
@@ -93,12 +96,10 @@ public class PatientServiceImplTest {
 
         Assertions.assertEquals(uniquePatients, result);
 
-        verify(patientRepository, times(1)).saveAll(argThat(arg -> {
-            List<Patient> patients = new ArrayList<>();
-            arg.forEach(patients::add);
+        ArgumentCaptor<List<Patient>> captor = ArgumentCaptor.forClass(List.class);
+        verify(patientRepository, times(1)).saveAll(captor.capture());
 
-            boolean areTwoPatientsInList = patients.size() == uniquePatients;
-
+        captor.getAllValues().forEach(patients -> {
             Assertions.assertEquals(uniquePatients, patients.size());
 
             Patient patientWithTwoClients = patients.stream()
@@ -123,9 +124,7 @@ public class PatientServiceImplTest {
 
             Assertions.assertTrue(areFirstAndThirdClientsTogether);
             Assertions.assertTrue(isSecondClientSeparated);
-
-            return areTwoPatientsInList && areFirstAndThirdClientsTogether && isSecondClientSeparated;
-        }));
+        });
     }
 
     @Test
